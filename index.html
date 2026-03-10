@@ -91,8 +91,9 @@ PUNTOS:<br>
 <button id="a" onclick="point('A')">EQUIPO A</button>
 <button id="b" onclick="point('B')">EQUIPO B</button>
 
+<!-- Botones de acciones -->
+<button class="small" onclick="confirmUndo()">↩︎ Deshacer</button>
 <button class="small" onclick="confirmReset()">🔄 Nuevo partido</button>
-<button class="small" onclick="undo()">↩︎ Deshacer</button>
 
 <script>
 let pA=0,pB=0,gA=0,gB=0,sA=0,sB=0;
@@ -101,6 +102,13 @@ let setsHistory=[];
 const names=["0","15","30","40"];
 
 function save(){ history.push([pA,pB,gA,gB,sA,sB]); }
+
+// Confirmación para deshacer
+function confirmUndo(){
+  if(confirm("¿Seguro que quieres deshacer el último punto?")){
+    undo();
+  }
+}
 
 function undo(){
   let h=history.pop();
