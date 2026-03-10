@@ -92,17 +92,19 @@ PUNTOS:<br>
 <button id="a" onclick="point('A')">EQUIPO <span class="bold">A</span></button>
 <button id="b" onclick="point('B')">EQUIPO <span class="bold">B</span></button>
 
-<!-- Botones de acciones -->
 <button class="small" onclick="confirmUndo()">↩︎ Deshacer</button>
 <button class="small" onclick="confirmReset()">🔄 Nuevo partido</button>
 
 <script>
 let pA=0,pB=0,gA=0,gB=0,sA=0,sB=0;
-let history=[];
-let setsHistory=[];
+let history=[];      // historial de puntos
+let setsHistory=[];  // historial de sets
 const names=["0","15","30","40"];
+let matchFinished=false;
 
-function save(){ history.push([pA,pB,gA,gB,sA,sB]); }
+function save(){ 
+  history.push([pA,pB,gA,gB,sA,sB, matchFinished, JSON.parse(JSON.stringify(setsHistory))]); 
+}
 
 // Confirmación para deshacer
 function confirmUndo(){
@@ -112,13 +114,13 @@ function confirmUndo(){
 }
 
 function undo(){
-  let h=history.pop();
-  if(!h) return;
-  [pA,pB,gA,gB,sA,sB]=h;
+  if(history.length===0) return;
+  let h = history.pop();
+  [pA,pB,gA,gB,sA,sB, matchFinished, setsHistory] = h;
   update();
 }
 
-// Doble confirmación para reiniciar
+// Confirmación para reiniciar partido
 function confirmReset(){
   if(confirm("Reiniciar partido?")){
     if(confirm("Confirma reinicio")){
@@ -131,6 +133,7 @@ function reset(){
   pA=pB=gA=gB=sA=sB=0;
   history=[];
   setsHistory=[];
+  matchFinished=false;
   document.getElementById("summary").innerHTML="";
   update();
 }
@@ -155,6 +158,8 @@ function update(flashTeam=null){
     el.classList.add("flash");
     setTimeout(()=>el.classList.remove("flash"),300);
   }
+
+  if(matchFinished) showSummary();
 }
 
 function winGame(team){
@@ -166,17 +171,19 @@ function winGame(team){
 }
 
 function winSet(team){
+  // Actualizamos setsHistory correctamente
   setsHistory.push({A:gA,B:gB});
   if(team=="A") sA++; else sB++;
   gA=0; gB=0; pA=0; pB=0;
-  update();
+
   if(sA==2||sB==2){
-    let winner = sA > sB ? "EQUIPO A" : "EQUIPO B";
-    showSummary(winner);
+    matchFinished=true;
   }
+  update();
 }
 
-function showSummary(winner){
+function showSummary(){
+  let winner = sA > sB ? "EQUIPO A" : "EQUIPO B";
   let summaryText = "<h3>🏆 Ganador: " + winner + "</h3>";
   summaryText += "<table><tr><th>Set</th><th>A</th><th>B</th></tr>";
   setsHistory.forEach((set,i)=>{
@@ -191,12 +198,15 @@ function showSummary(winner){
 
 function point(team){
   save();
+  if(matchFinished) return; // no añadir puntos si ya terminó
+  // Tie-break
   if(gA==6 && gB==6){
     if(team=="A") pA++; else pB++;
     if((pA>=7||pB>=7)&&Math.abs(pA-pB)>=2) winGame(team);
     update(team);
     return;
   }
+  // Puntos normales
   if(team=="A"){ if(pA<3) pA++; else winGame("A"); }
   else{ if(pB<3) pB++; else winGame("B"); }
   update(team);
