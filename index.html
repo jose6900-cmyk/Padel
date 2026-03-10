@@ -14,20 +14,22 @@ body{
 }
 .header{
   margin:5px 0;
-  font-size:16px; /* más pequeño */
+  font-size:16px;
   display:flex;
   justify-content:space-around;
 }
 .header div span{
-  font-size:18px; /* números discretos */
+  font-size:18px;
+  font-weight:bold;
 }
 .score{
   margin:10px 0;
-  font-size:28px; /* puntos grandes */
+  font-size:28px;
 }
 .score span{
   font-size:36px;
   margin:0 10px;
+  font-weight:bold;
 }
 .summary{
   margin-top:15px;
@@ -42,6 +44,7 @@ body{
   border:1px solid #fff;
   padding:6px;
   font-size:18px;
+  text-align:center;
 }
 button{
   width:95%;
@@ -53,7 +56,7 @@ button{
   color:white;
 }
 #a{background:#34c759;} /* verde */
-#b{background:#ff3b30;} /* rojo */
+#b{background:#ff9500;} /* naranja */
 .small{
   font-size:14px;
   padding:10px;
@@ -110,12 +113,21 @@ function reset(){
 }
 
 function update(){
-  document.getElementById("pointsA").innerHTML=(gA==6 && gB==6)?pA:(names[pA]??pA);
-  document.getElementById("pointsB").innerHTML=(gA==6 && gB==6)?pB:(names[pB]??pB);
-  document.getElementById("gamesA").innerHTML=gA;
-  document.getElementById("gamesB").innerHTML=gB;
-  document.getElementById("setsA").innerHTML=sA;
-  document.getElementById("setsB").innerHTML=sB;
+  // Colores de números según equipo
+  document.getElementById("pointsA").innerHTML = (gA==6 && gB==6)?pA:(names[pA]??pA);
+  document.getElementById("pointsB").innerHTML = (gA==6 && gB==6)?pB:(names[pB]??pB);
+  document.getElementById("gamesA").innerHTML = gA;
+  document.getElementById("gamesB").innerHTML = gB;
+  document.getElementById("setsA").innerHTML = sA;
+  document.getElementById("setsB").innerHTML = sB;
+
+  // Aplicar colores
+  document.getElementById("pointsA").style.color = "#34c759"; // verde
+  document.getElementById("pointsB").style.color = "#ff9500"; // naranja
+  document.getElementById("gamesA").style.color = "#34c759";
+  document.getElementById("gamesB").style.color = "#ff9500";
+  document.getElementById("setsA").style.color = "#34c759";
+  document.getElementById("setsB").style.color = "#ff9500";
 }
 
 function winGame(team){
@@ -144,10 +156,13 @@ function showSummary(winner){
   let summaryText = "<h3>🏆 Ganador: " + winner + "</h3>";
   summaryText += "<table><tr><th>Set</th><th>A</th><th>B</th></tr>";
   setsHistory.forEach((set,i)=>{
-    summaryText += "<tr><td>"+(i+1)+"</td><td>"+set.A+"</td><td>"+set.B+"</td></tr>";
+    // Resaltar ganador del set
+    let colorA = set.A > set.B ? "#34c759" : "#ff9500";
+    let colorB = set.B > set.A ? "#ff9500" : "#34c759";
+    summaryText += "<tr><td>"+(i+1)+"</td><td style='color:"+colorA+"'>"+set.A+"</td><td style='color:"+colorB+"'>"+set.B+"</td></tr>";
   });
   summaryText += "</table>";
-  summaryText += "<p>Total Sets: A "+sA+" - B "+sB+"</p>";
+  summaryText += "<p>Total Sets: <span style='color:#34c759'>A "+sA+"</span> - <span style='color:#ff9500'>B "+sB+"</span></p>";
   document.getElementById("summary").innerHTML = summaryText;
 }
 
