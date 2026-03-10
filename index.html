@@ -69,14 +69,6 @@ button{
   color:white;
 }
 .bold{ font-weight:bold; } 
-.version{
-  position:fixed;
-  bottom:2px;
-  right:4px;
-  font-size:10px;
-  color:#888;
-  z-index:1000;
-}
 </style>
 </head>
 <body>
@@ -102,8 +94,6 @@ PUNTOS:<br>
 
 <button class="small" onclick="confirmUndo()">↩︎ Deshacer</button>
 <button class="small" onclick="confirmReset()">🔄 Nuevo partido</button>
-
-<div class="version">v 1.6</div>
 
 <script>
 let pA=0,pB=0,gA=0,gB=0,sA=0,sB=0;
@@ -139,7 +129,7 @@ function confirmReset(){
 }
 
 function reset(){
-  pA=pB=gA=gB=sA=sB=0;
+  pA=pB=gA=gB,sA=sB=0;
   history=[];
   setsHistory=[];
   matchFinished=false;
