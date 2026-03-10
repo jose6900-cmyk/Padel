@@ -30,6 +30,11 @@ body{
   font-size:36px;
   margin:0 10px;
   font-weight:bold;
+  transition: 0.3s;
+}
+.flash{
+  transform: scale(1.5);
+  transition: transform 0.3s;
 }
 .summary{
   margin-top:15px;
@@ -56,7 +61,7 @@ button{
   color:white;
 }
 #a{background:#34c759;} /* verde */
-#b{background:#ff9500;} /* naranja */
+#b{background:#003366;} /* azul oscuro */
 .small{
   font-size:14px;
   padding:10px;
@@ -112,8 +117,8 @@ function reset(){
   update();
 }
 
-function update(){
-  // Colores de números según equipo
+function update(flashTeam=null){
+  // Actualizar valores
   document.getElementById("pointsA").innerHTML = (gA==6 && gB==6)?pA:(names[pA]??pA);
   document.getElementById("pointsB").innerHTML = (gA==6 && gB==6)?pB:(names[pB]??pB);
   document.getElementById("gamesA").innerHTML = gA;
@@ -121,13 +126,20 @@ function update(){
   document.getElementById("setsA").innerHTML = sA;
   document.getElementById("setsB").innerHTML = sB;
 
-  // Aplicar colores
+  // Colores
   document.getElementById("pointsA").style.color = "#34c759"; // verde
-  document.getElementById("pointsB").style.color = "#ff9500"; // naranja
+  document.getElementById("pointsB").style.color = "#003366"; // azul oscuro
   document.getElementById("gamesA").style.color = "#34c759";
-  document.getElementById("gamesB").style.color = "#ff9500";
+  document.getElementById("gamesB").style.color = "#003366";
   document.getElementById("setsA").style.color = "#34c759";
-  document.getElementById("setsB").style.color = "#ff9500";
+  document.getElementById("setsB").style.color = "#003366";
+
+  // Animación flash
+  if(flashTeam){
+    let el = flashTeam === 'A' ? document.getElementById("pointsA") : document.getElementById("pointsB");
+    el.classList.add("flash");
+    setTimeout(()=>el.classList.remove("flash"),300);
+  }
 }
 
 function winGame(team){
@@ -156,13 +168,12 @@ function showSummary(winner){
   let summaryText = "<h3>🏆 Ganador: " + winner + "</h3>";
   summaryText += "<table><tr><th>Set</th><th>A</th><th>B</th></tr>";
   setsHistory.forEach((set,i)=>{
-    // Resaltar ganador del set
-    let colorA = set.A > set.B ? "#34c759" : "#ff9500";
-    let colorB = set.B > set.A ? "#ff9500" : "#34c759";
+    let colorA = set.A > set.B ? "#34c759" : "#003366";
+    let colorB = set.B > set.A ? "#003366" : "#34c759";
     summaryText += "<tr><td>"+(i+1)+"</td><td style='color:"+colorA+"'>"+set.A+"</td><td style='color:"+colorB+"'>"+set.B+"</td></tr>";
   });
   summaryText += "</table>";
-  summaryText += "<p>Total Sets: <span style='color:#34c759'>A "+sA+"</span> - <span style='color:#ff9500'>B "+sB+"</span></p>";
+  summaryText += "<p>Total Sets: <span style='color:#34c759'>A "+sA+"</span> - <span style='color:#003366'>B "+sB+"</span></p>";
   document.getElementById("summary").innerHTML = summaryText;
 }
 
@@ -171,11 +182,12 @@ function point(team){
   if(gA==6 && gB==6){
     if(team=="A") pA++; else pB++;
     if((pA>=7||pB>=7)&&Math.abs(pA-pB)>=2) winGame(team);
-    update(); return;
+    update(team); 
+    return;
   }
   if(team=="A"){ if(pA<3) pA++; else winGame("A"); }
   else{ if(pB<3) pB++; else winGame("B"); }
-  update();
+  update(team);
 }
 
 update();
