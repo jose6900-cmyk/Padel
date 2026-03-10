@@ -69,8 +69,6 @@ button{
   color:white;
 }
 .bold{ font-weight:bold; } 
-
-/* Etiqueta de versión discreta */
 .version{
   position:fixed;
   bottom:2px;
@@ -105,13 +103,12 @@ PUNTOS:<br>
 <button class="small" onclick="confirmUndo()">↩︎ Deshacer</button>
 <button class="small" onclick="confirmReset()">🔄 Nuevo partido</button>
 
-<!-- Etiqueta de versión discreta -->
-<div class="version">v 1.5</div>
+<div class="version">v 1.6</div>
 
 <script>
 let pA=0,pB=0,gA=0,gB=0,sA=0,sB=0;
-let history=[];      // historial de puntos
-let setsHistory=[];  // historial de sets
+let history=[];
+let setsHistory=[];
 const names=["0","15","30","40"];
 let matchFinished=false;
 
@@ -119,11 +116,8 @@ function save(){
   history.push([pA,pB,gA,gB,sA,sB, matchFinished, JSON.parse(JSON.stringify(setsHistory))]); 
 }
 
-// Confirmación para deshacer
 function confirmUndo(){
-  if(confirm("Deshacer último punto?")){
-    undo();
-  }
+  if(confirm("Deshacer último punto?")) undo();
 }
 
 function undo(){
@@ -131,21 +125,16 @@ function undo(){
   let h = history.pop();
   [pA,pB,gA,gB,sA,sB, matchFinished, setsHistory] = h;
 
-  // Si se deshace después de terminar, ocultar la tabla y permitir seguir jugando
-  if(matchFinished){
-    matchFinished=false;
-    document.getElementById("summary").innerHTML = "";
-  }
+  // Forzamos ocultar la tabla al deshacer cualquier punto
+  document.getElementById("summary").innerHTML = "";
+  matchFinished=false;
 
   update();
 }
 
-// Confirmación para reiniciar partido
 function confirmReset(){
-  if(confirm("Reiniciar partido?")){
-    if(confirm("Confirma reinicio")){
-      reset();
-    }
+  if(confirm("Reiniciar partido?")) {
+    if(confirm("Confirma reinicio")) reset();
   }
 }
 
@@ -195,9 +184,7 @@ function winSet(team){
   if(team=="A") sA++; else sB++;
   gA=0; gB=0; pA=0; pB=0;
 
-  if(sA==2||sB==2){
-    matchFinished=true;
-  }
+  if(sA==2||sB==2) matchFinished=true;
   update();
 }
 
@@ -217,15 +204,15 @@ function showSummary(){
 
 function point(team){
   save();
-  if(matchFinished) return; // no añadir puntos si ya terminó
-  // Tie-break
+  if(matchFinished) return;
+
   if(gA==6 && gB==6){
     if(team=="A") pA++; else pB++;
     if((pA>=7||pB>=7)&&Math.abs(pA-pB)>=2) winGame(team);
     update(team);
     return;
   }
-  // Puntos normales
+
   if(team=="A"){ if(pA<3) pA++; else winGame("A"); }
   else{ if(pB<3) pB++; else winGame("B"); }
   update(team);
