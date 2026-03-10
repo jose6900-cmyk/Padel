@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Marcador Pádel</title>
+
+<link rel="apple-touch-icon" href="icon.png">
+
 <style>
 
 body{
@@ -23,6 +29,7 @@ font-size:24px;
 
 .sets{
 font-size:18px;
+color:white;
 }
 
 button{
@@ -32,18 +39,26 @@ padding:18px;
 font-size:22px;
 border-radius:14px;
 border:none;
+color:white;
 }
 
-#a{background:#0a84ff;color:white;}
-#b{background:#ff453a;color:white;}
+#a{
+background:#34c759;
+}
+
+#b{
+background:#ff3b30;
+}
 
 .small{
 font-size:14px;
 padding:10px;
 background:#333;
+color:white;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -66,7 +81,7 @@ JUEGOS<br>
 <button id="b" onclick="point('B')">EQUIPO B</button>
 
 <button class="small" onclick="undo()">↩︎ Deshacer</button>
-<button class="small" onclick="reset()">🔄 Nuevo</button>
+<button class="small" onclick="reset()">🔄 Nuevo partido</button>
 
 <script>
 
@@ -89,87 +104,98 @@ update()
 }
 
 function reset(){
-pA=pB=gA=gB=sA=sB=0
+pA=0
+pB=0
+gA=0
+gB=0
+sA=0
+sB=0
 history=[]
 update()
 }
 
 function update(){
 
-document.getElementById("pointsA").innerHTML=(gA==6&&gB==6)?pA:names[pA]??pA
-document.getElementById("pointsB").innerHTML=(gA==6&&gB==6)?pB:names[pB]??pB
+document.getElementById("pointsA").innerHTML=(gA==6 && gB==6)?pA:(names[pA] ?? pA)
+document.getElementById("pointsB").innerHTML=(gA==6 && gB==6)?pB:(names[pB] ?? pB)
 
 document.getElementById("gamesA").innerHTML=gA
 document.getElementById("gamesB").innerHTML=gB
 
 document.getElementById("setsA").innerHTML=sA
 document.getElementById("setsB").innerHTML=sB
+
 }
 
-function winGame(t){
+function winGame(team){
 
-if(t=="A")gA++
+if(team=="A") gA++
 else gB++
 
-pA=pB=0
+pA=0
+pB=0
 
-if((gA>=6||gB>=6)&&Math.abs(gA-gB)>=2){
-winSet(t)
+if((gA>=6 || gB>=6) && Math.abs(gA-gB)>=2){
+winSet(team)
 }
 
-if(gA==7||gB==7){
-winSet(t)
+if(gA==7 || gB==7){
+winSet(team)
 }
 
 update()
+
 }
 
-function winSet(t){
+function winSet(team){
 
-if(t=="A")sA++
+if(team=="A") sA++
 else sB++
 
-gA=gB=0
+gA=0
+gB=0
 
-if(sA==2||sB==2){
+if(sA==2 || sB==2){
 alert("Partido terminado")
 }
 
 }
 
-function point(t){
+function point(team){
 
 save()
 
 // tie break
-if(gA==6&&gB==6){
+if(gA==6 && gB==6){
 
-if(t=="A")pA++
+if(team=="A") pA++
 else pB++
 
-if((pA>=7||pB>=7)&&Math.abs(pA-pB)>=2){
-winGame(t)
+if((pA>=7 || pB>=7) && Math.abs(pA-pB)>=2){
+winGame(team)
 }
 
 update()
 return
+
 }
 
-// normal
+// puntos normales
 
-if(t=="A"){
+if(team=="A"){
 
-if(pA<3)pA++
+if(pA<3) pA++
 else winGame("A")
 
 }else{
 
-if(pB<3)pB++
+if(pB<3) pB++
 else winGame("B")
 
 }
 
-if(pA==3&&pB==3){
+// punto de oro
+if(pA==3 && pB==3){
 }
 
 update()
