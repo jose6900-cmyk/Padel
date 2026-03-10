@@ -5,34 +5,42 @@
 <style>
 
 body{
-font-family: Arial;
-text-align:center;
 background:#000;
 color:white;
+font-family:-apple-system;
+text-align:center;
 margin:0;
-padding:5px;
 }
-
-button{
-width:100%;
-padding:18px;
-font-size:20px;
-margin-top:6px;
-border-radius:12px;
-border:none;
-}
-
-#a{background:#1e90ff;}
-#b{background:#ff3b30;}
 
 .score{
-font-size:22px;
-margin:6px;
+font-size:28px;
+margin-top:5px;
+}
+
+.games{
+font-size:24px;
 }
 
 .sets{
 font-size:18px;
-margin-top:5px;
+}
+
+button{
+width:95%;
+margin:4px;
+padding:18px;
+font-size:22px;
+border-radius:14px;
+border:none;
+}
+
+#a{background:#0a84ff;color:white;}
+#b{background:#ff453a;color:white;}
+
+.small{
+font-size:14px;
+padding:10px;
+background:#333;
 }
 
 </style>
@@ -41,120 +49,127 @@ margin-top:5px;
 <body>
 
 <div class="sets">
-Sets: <span id="setsA">0</span> - <span id="setsB">0</span>
+SETS<br>
+<span id="setsA">0</span> - <span id="setsB">0</span>
+</div>
+
+<div class="games">
+JUEGOS<br>
+<span id="gamesA">0</span> - <span id="gamesB">0</span>
 </div>
 
 <div class="score">
-Juegos: <span id="gamesA">0</span> - <span id="gamesB">0</span>
+<span id="pointsA">0</span> - <span id="pointsB">0</span>
 </div>
 
-<div class="score">
-Puntos: <span id="pointsA">0</span> - <span id="pointsB">0</span>
-</div>
+<button id="a" onclick="point('A')">EQUIPO A</button>
+<button id="b" onclick="point('B')">EQUIPO B</button>
 
-<button id="a" onclick="point('A')">Equipo A +</button>
-<button id="b" onclick="point('B')">Equipo B +</button>
+<button class="small" onclick="undo()">↩︎ Deshacer</button>
+<button class="small" onclick="reset()">🔄 Nuevo</button>
 
 <script>
 
-let pointsA=0
-let pointsB=0
-let gamesA=0
-let gamesB=0
-let setsA=0
-let setsB=0
+let pA=0,pB=0
+let gA=0,gB=0
+let sA=0,sB=0
+let history=[]
 
-let pointNames=["0","15","30","40"]
+const names=["0","15","30","40"]
+
+function save(){
+history.push([pA,pB,gA,gB,sA,sB])
+}
+
+function undo(){
+let h=history.pop()
+if(!h)return
+[pA,pB,gA,gB,sA,sB]=h
+update()
+}
+
+function reset(){
+pA=pB=gA=gB=sA=sB=0
+history=[]
+update()
+}
 
 function update(){
 
-document.getElementById("pointsA").innerHTML=pointNames[pointsA] ?? pointsA
-document.getElementById("pointsB").innerHTML=pointNames[pointsB] ?? pointsB
+document.getElementById("pointsA").innerHTML=(gA==6&&gB==6)?pA:names[pA]??pA
+document.getElementById("pointsB").innerHTML=(gA==6&&gB==6)?pB:names[pB]??pB
 
-document.getElementById("gamesA").innerHTML=gamesA
-document.getElementById("gamesB").innerHTML=gamesB
+document.getElementById("gamesA").innerHTML=gA
+document.getElementById("gamesB").innerHTML=gB
 
-document.getElementById("setsA").innerHTML=setsA
-document.getElementById("setsB").innerHTML=setsB
-
+document.getElementById("setsA").innerHTML=sA
+document.getElementById("setsB").innerHTML=sB
 }
 
-function resetPoints(){
-pointsA=0
-pointsB=0
+function winGame(t){
+
+if(t=="A")gA++
+else gB++
+
+pA=pB=0
+
+if((gA>=6||gB>=6)&&Math.abs(gA-gB)>=2){
+winSet(t)
 }
 
-function winGame(team){
-
-if(team=="A") gamesA++
-else gamesB++
-
-resetPoints()
-
-if((gamesA>=6 || gamesB>=6) && Math.abs(gamesA-gamesB)>=2){
-winSet(team)
-}
-
-if(gamesA==7 || gamesB==7){
-winSet(team)
+if(gA==7||gB==7){
+winSet(t)
 }
 
 update()
-
 }
 
-function winSet(team){
+function winSet(t){
 
-if(team=="A") setsA++
-else setsB++
+if(t=="A")sA++
+else sB++
 
-gamesA=0
-gamesB=0
+gA=gB=0
 
-if(setsA==2 || setsB==2){
+if(sA==2||sB==2){
 alert("Partido terminado")
 }
 
 }
 
-function point(team){
+function point(t){
+
+save()
 
 // tie break
-if(gamesA==6 && gamesB==6){
+if(gA==6&&gB==6){
 
-if(team=="A") pointsA++
-else pointsB++
+if(t=="A")pA++
+else pB++
 
-if((pointsA>=7 || pointsB>=7) && Math.abs(pointsA-pointsB)>=2){
-winGame(team)
+if((pA>=7||pB>=7)&&Math.abs(pA-pB)>=2){
+winGame(t)
 }
 
 update()
 return
 }
 
-// punto normal
+// normal
 
-if(team=="A"){
+if(t=="A"){
 
-if(pointsA<3){
-pointsA++
-}else{
-winGame("A")
-}
+if(pA<3)pA++
+else winGame("A")
 
 }else{
 
-if(pointsB<3){
-pointsB++
-}else{
-winGame("B")
-}
+if(pB<3)pB++
+else winGame("B")
 
 }
 
-// punto de oro
-if(pointsA==3 && pointsB==3){
+if(pA==3&&pB==3){
 }
 
 update()
