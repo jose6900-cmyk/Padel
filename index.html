@@ -13,32 +13,32 @@ body{
   margin:0;
 }
 .header{
-  margin:5px 0;
-  font-size:16px;
   display:flex;
   justify-content:space-around;
+  margin:4px 0;
+  font-size:14px;
 }
 .header div span{
-  font-size:18px;
+  font-size:16px;
   font-weight:bold;
 }
 .score{
-  margin:10px 0;
-  font-size:28px;
+  margin:8px 0;
+  font-size:26px;
 }
 .score span{
   font-size:36px;
-  margin:0 10px;
+  margin:0 12px;
   font-weight:bold;
-  transition: 0.3s;
+  transition: transform 0.3s;
 }
 .flash{
   transform: scale(1.5);
   transition: transform 0.3s;
 }
 .summary{
-  margin-top:15px;
-  font-size:18px;
+  margin-top:12px;
+  font-size:16px;
 }
 .summary table{
   width:95%;
@@ -47,21 +47,21 @@ body{
 }
 .summary th, .summary td{
   border:1px solid #fff;
-  padding:6px;
-  font-size:18px;
+  padding:5px;
+  font-size:16px;
   text-align:center;
 }
 button{
   width:95%;
   margin:4px;
-  padding:20px;
-  font-size:24px;
+  padding:18px;
+  font-size:22px;
   border-radius:14px;
   border:none;
   color:white;
 }
 #a{background:#34c759;} /* verde */
-#b{background:#0055aa;} /* azul oscuro más claro */
+#b{background:#0055aa;} /* azul oscuro */
 .small{
   font-size:14px;
   padding:10px;
@@ -91,8 +91,8 @@ PUNTOS:<br>
 <button id="a" onclick="point('A')">EQUIPO A</button>
 <button id="b" onclick="point('B')">EQUIPO B</button>
 
+<button class="small" onclick="confirmReset()">🔄 Nuevo partido</button>
 <button class="small" onclick="undo()">↩︎ Deshacer</button>
-<button class="small" onclick="reset()">🔄 Nuevo partido</button>
 
 <script>
 let pA=0,pB=0,gA=0,gB=0,sA=0,sB=0;
@@ -109,6 +109,15 @@ function undo(){
   update();
 }
 
+// Doble confirmación para reiniciar
+function confirmReset(){
+  if(confirm("¿Seguro que quieres reiniciar el partido?")){
+    if(confirm("Confirma de nuevo para reiniciar el partido")){
+      reset();
+    }
+  }
+}
+
 function reset(){
   pA=pB=gA=gB=sA=sB=0;
   history=[];
@@ -118,7 +127,6 @@ function reset(){
 }
 
 function update(flashTeam=null){
-  // Actualizar valores
   document.getElementById("pointsA").innerHTML = (gA==6 && gB==6)?pA:(names[pA]??pA);
   document.getElementById("pointsB").innerHTML = (gA==6 && gB==6)?pB:(names[pB]??pB);
   document.getElementById("gamesA").innerHTML = gA;
@@ -126,15 +134,13 @@ function update(flashTeam=null){
   document.getElementById("setsA").innerHTML = sA;
   document.getElementById("setsB").innerHTML = sB;
 
-  // Colores
-  document.getElementById("pointsA").style.color = "#34c759"; // verde
-  document.getElementById("pointsB").style.color = "#0055aa"; // azul oscuro más claro
+  document.getElementById("pointsA").style.color = "#34c759";
+  document.getElementById("pointsB").style.color = "#0055aa";
   document.getElementById("gamesA").style.color = "#34c759";
   document.getElementById("gamesB").style.color = "#0055aa";
   document.getElementById("setsA").style.color = "#34c759";
   document.getElementById("setsB").style.color = "#0055aa";
 
-  // Animación flash
   if(flashTeam){
     let el = flashTeam === 'A' ? document.getElementById("pointsA") : document.getElementById("pointsB");
     el.classList.add("flash");
@@ -152,12 +158,9 @@ function winGame(team){
 
 function winSet(team){
   setsHistory.push({A:gA,B:gB});
-  
   if(team=="A") sA++; else sB++;
   gA=0; gB=0; pA=0; pB=0;
-  
   update();
-  
   if(sA==2||sB==2){
     let winner = sA > sB ? "EQUIPO A" : "EQUIPO B";
     showSummary(winner);
@@ -182,7 +185,7 @@ function point(team){
   if(gA==6 && gB==6){
     if(team=="A") pA++; else pB++;
     if((pA>=7||pB>=7)&&Math.abs(pA-pB)>=2) winGame(team);
-    update(team); 
+    update(team);
     return;
   }
   if(team=="A"){ if(pA<3) pA++; else winGame("A"); }
