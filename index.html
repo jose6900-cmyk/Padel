@@ -68,6 +68,7 @@ button{
   background:#333;
   color:white;
 }
+.bold{ font-weight:bold; } 
 </style>
 </head>
 <body>
@@ -88,8 +89,8 @@ PUNTOS:<br>
 
 <div class="summary" id="summary"></div>
 
-<button id="a" onclick="point('A')">EQUIPO A</button>
-<button id="b" onclick="point('B')">EQUIPO B</button>
+<button id="a" onclick="point('A')"><span class="bold">A</span> EQUIPO</button>
+<button id="b" onclick="point('B')"><span class="bold">B</span> EQUIPO</button>
 
 <!-- Botones de acciones -->
 <button class="small" onclick="confirmUndo()">↩︎ Deshacer</button>
@@ -105,7 +106,7 @@ function save(){ history.push([pA,pB,gA,gB,sA,sB]); }
 
 // Confirmación para deshacer
 function confirmUndo(){
-  if(confirm("¿Seguro que quieres deshacer el último punto?")){
+  if(confirm("Deshacer último punto?")){
     undo();
   }
 }
@@ -119,8 +120,8 @@ function undo(){
 
 // Doble confirmación para reiniciar
 function confirmReset(){
-  if(confirm("¿Seguro que quieres reiniciar el partido?")){
-    if(confirm("Confirma de nuevo para reiniciar el partido")){
+  if(confirm("Reiniciar partido?")){
+    if(confirm("Confirma reinicio")){
       reset();
     }
   }
