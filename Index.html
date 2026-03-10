@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+
+body{
+font-family: Arial;
+text-align:center;
+background:#000;
+color:white;
+margin:0;
+padding:5px;
+}
+
+button{
+width:100%;
+padding:18px;
+font-size:20px;
+margin-top:6px;
+border-radius:12px;
+border:none;
+}
+
+#a{background:#1e90ff;}
+#b{background:#ff3b30;}
+
+.score{
+font-size:22px;
+margin:6px;
+}
+
+.sets{
+font-size:18px;
+margin-top:5px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sets">
+Sets: <span id="setsA">0</span> - <span id="setsB">0</span>
+</div>
+
+<div class="score">
+Juegos: <span id="gamesA">0</span> - <span id="gamesB">0</span>
+</div>
+
+<div class="score">
+Puntos: <span id="pointsA">0</span> - <span id="pointsB">0</span>
+</div>
+
+<button id="a" onclick="point('A')">Equipo A +</button>
+<button id="b" onclick="point('B')">Equipo B +</button>
+
+<script>
+
+let pointsA=0
+let pointsB=0
+let gamesA=0
+let gamesB=0
+let setsA=0
+let setsB=0
+
+let pointNames=["0","15","30","40"]
+
+function update(){
+
+document.getElementById("pointsA").innerHTML=pointNames[pointsA] ?? pointsA
+document.getElementById("pointsB").innerHTML=pointNames[pointsB] ?? pointsB
+
+document.getElementById("gamesA").innerHTML=gamesA
+document.getElementById("gamesB").innerHTML=gamesB
+
+document.getElementById("setsA").innerHTML=setsA
+document.getElementById("setsB").innerHTML=setsB
+
+}
+
+function resetPoints(){
+pointsA=0
+pointsB=0
+}
+
+function winGame(team){
+
+if(team=="A") gamesA++
+else gamesB++
+
+resetPoints()
+
+if((gamesA>=6 || gamesB>=6) && Math.abs(gamesA-gamesB)>=2){
+winSet(team)
+}
+
+if(gamesA==7 || gamesB==7){
+winSet(team)
+}
+
+update()
+
+}
+
+function winSet(team){
+
+if(team=="A") setsA++
+else setsB++
+
+gamesA=0
+gamesB=0
+
+if(setsA==2 || setsB==2){
+alert("Partido terminado")
+}
+
+}
+
+function point(team){
+
+// tie break
+if(gamesA==6 && gamesB==6){
+
+if(team=="A") pointsA++
+else pointsB++
+
+if((pointsA>=7 || pointsB>=7) && Math.abs(pointsA-pointsB)>=2){
+winGame(team)
+}
+
+update()
+return
+}
+
+// punto normal
+
+if(team=="A"){
+
+if(pointsA<3){
+pointsA++
+}else{
+winGame("A")
+}
+
+}else{
+
+if(pointsB<3){
+pointsB++
+}else{
+winGame("B")
+}
+
+}
+
+// punto de oro
+if(pointsA==3 && pointsB==3){
+}
+
+update()
+
+}
+
+update()
+
+</script>
+
+</body>
+</html>
