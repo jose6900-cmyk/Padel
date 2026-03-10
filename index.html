@@ -12,11 +12,22 @@ body{
   text-align:center;
   margin:0;
 }
-.sets, .games, .score, .summary{
+.header{
   margin:5px 0;
+  font-size:16px; /* más pequeño */
+  display:flex;
+  justify-content:space-around;
 }
-.sets span, .games span, .score span{
-  font-size:22px;
+.header div span{
+  font-size:18px; /* números discretos */
+}
+.score{
+  margin:10px 0;
+  font-size:28px; /* puntos grandes */
+}
+.score span{
+  font-size:36px;
+  margin:0 10px;
 }
 .summary{
   margin-top:15px;
@@ -53,18 +64,17 @@ button{
 </head>
 <body>
 
-<div class="sets">
-SETS<br>
-<span id="setsA">0</span> - <span id="setsB">0</span>
-</div>
-
-<div class="games">
-JUEGOS<br>
-<span id="gamesA">0</span> - <span id="gamesB">0</span>
+<div class="header">
+  <div class="sets">
+    SETS: <span id="setsA">0</span> - <span id="setsB">0</span>
+  </div>
+  <div class="games">
+    JUEGOS: <span id="gamesA">0</span> - <span id="gamesB">0</span>
+  </div>
 </div>
 
 <div class="score">
-PUNTOS<br>
+PUNTOS:<br>
 <span id="pointsA">0</span> - <span id="pointsB">0</span>
 </div>
 
@@ -125,7 +135,6 @@ function winSet(team){
   update();
   
   if(sA==2||sB==2){
-    // Fin del partido
     let winner = sA > sB ? "EQUIPO A" : "EQUIPO B";
     showSummary(winner);
   }
