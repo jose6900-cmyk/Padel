@@ -12,17 +12,31 @@ body{
   text-align:center;
   margin:0;
 }
-.sets, .games, .score{
+.sets, .games, .score, .summary{
   margin:5px 0;
 }
 .sets span, .games span, .score span{
   font-size:22px;
 }
+.summary{
+  margin-top:15px;
+  font-size:18px;
+}
+.summary table{
+  width:95%;
+  margin:auto;
+  border-collapse: collapse;
+}
+.summary th, .summary td{
+  border:1px solid #fff;
+  padding:6px;
+  font-size:18px;
+}
 button{
   width:95%;
   margin:4px;
   padding:20px;
-  font-size:22px;
+  font-size:24px;
   border-radius:14px;
   border:none;
   color:white;
@@ -54,6 +68,8 @@ PUNTOS<br>
 <span id="pointsA">0</span> - <span id="pointsB">0</span>
 </div>
 
+<div class="summary" id="summary"></div>
+
 <button id="a" onclick="point('A')">EQUIPO A</button>
 <button id="b" onclick="point('B')">EQUIPO B</button>
 
@@ -63,7 +79,7 @@ PUNTOS<br>
 <script>
 let pA=0,pB=0,gA=0,gB=0,sA=0,sB=0;
 let history=[];
-
+let setsHistory=[];
 const names=["0","15","30","40"];
 
 function save(){ history.push([pA,pB,gA,gB,sA,sB]); }
@@ -78,6 +94,8 @@ function undo(){
 function reset(){
   pA=pB=gA=gB=sA=sB=0;
   history=[];
+  setsHistory=[];
+  document.getElementById("summary").innerHTML="";
   update();
 }
 
@@ -93,34 +111,46 @@ function update(){
 function winGame(team){
   if(team=="A") gA++; else gB++;
   pA=0; pB=0;
-  if((gA>=6||gB>=6)&&Math.abs(gA-gB)>=2){ winSet(team); }
-  if(gA==7||gB==7){ winSet(team); }
+  if((gA>=6||gB>=6)&&Math.abs(gA-gB)>=2) winSet(team);
+  if(gA==7||gB==7) winSet(team);
   update();
 }
 
 function winSet(team){
+  setsHistory.push({A:gA,B:gB});
+  
   if(team=="A") sA++; else sB++;
-  gA=0; gB=0;
-  pA=0; pB=0;
+  gA=0; gB=0; pA=0; pB=0;
+  
+  update();
+  
   if(sA==2||sB==2){
-    alert("Partido terminado");
+    // Fin del partido
+    let winner = sA > sB ? "EQUIPO A" : "EQUIPO B";
+    showSummary(winner);
   }
+}
+
+function showSummary(winner){
+  let summaryText = "<h3>🏆 Ganador: " + winner + "</h3>";
+  summaryText += "<table><tr><th>Set</th><th>A</th><th>B</th></tr>";
+  setsHistory.forEach((set,i)=>{
+    summaryText += "<tr><td>"+(i+1)+"</td><td>"+set.A+"</td><td>"+set.B+"</td></tr>";
+  });
+  summaryText += "</table>";
+  summaryText += "<p>Total Sets: A "+sA+" - B "+sB+"</p>";
+  document.getElementById("summary").innerHTML = summaryText;
 }
 
 function point(team){
   save();
-  // tie break
   if(gA==6 && gB==6){
     if(team=="A") pA++; else pB++;
-    if((pA>=7||pB>=7)&&Math.abs(pA-pB)>=2){ winGame(team); }
+    if((pA>=7||pB>=7)&&Math.abs(pA-pB)>=2) winGame(team);
     update(); return;
   }
-  // puntos normales
-  if(team=="A"){
-    if(pA<3) pA++; else winGame("A");
-  }else{
-    if(pB<3) pB++; else winGame("B");
-  }
+  if(team=="A"){ if(pA<3) pA++; else winGame("A"); }
+  else{ if(pB<3) pB++; else winGame("B"); }
   update();
 }
 
