@@ -69,6 +69,16 @@ button{
   color:white;
 }
 .bold{ font-weight:bold; } 
+
+/* Etiqueta de versión discreta */
+.version{
+  position:fixed;
+  bottom:2px;
+  right:4px;
+  font-size:10px;
+  color:#888;
+  z-index:1000;
+}
 </style>
 </head>
 <body>
@@ -95,6 +105,9 @@ PUNTOS:<br>
 <button class="small" onclick="confirmUndo()">↩︎ Deshacer</button>
 <button class="small" onclick="confirmReset()">🔄 Nuevo partido</button>
 
+<!-- Etiqueta de versión discreta -->
+<div class="version">v 1.5</div>
+
 <script>
 let pA=0,pB=0,gA=0,gB=0,sA=0,sB=0;
 let history=[];      // historial de puntos
@@ -118,7 +131,7 @@ function undo(){
   let h = history.pop();
   [pA,pB,gA,gB,sA,sB, matchFinished, setsHistory] = h;
 
-  // Si se deshace después de terminar, ocultar la tabla
+  // Si se deshace después de terminar, ocultar la tabla y permitir seguir jugando
   if(matchFinished){
     matchFinished=false;
     document.getElementById("summary").innerHTML = "";
