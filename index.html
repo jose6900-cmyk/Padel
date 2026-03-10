@@ -117,6 +117,13 @@ function undo(){
   if(history.length===0) return;
   let h = history.pop();
   [pA,pB,gA,gB,sA,sB, matchFinished, setsHistory] = h;
+
+  // Si se deshace después de terminar, ocultar la tabla
+  if(matchFinished){
+    matchFinished=false;
+    document.getElementById("summary").innerHTML = "";
+  }
+
   update();
 }
 
@@ -171,7 +178,6 @@ function winGame(team){
 }
 
 function winSet(team){
-  // Actualizamos setsHistory correctamente
   setsHistory.push({A:gA,B:gB});
   if(team=="A") sA++; else sB++;
   gA=0; gB=0; pA=0; pB=0;
