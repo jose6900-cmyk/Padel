@@ -12,15 +12,11 @@ body{
   text-align:center;
   margin:0;
 }
-.sets, .games, .score, .server{
+.sets, .games, .score{
   margin:5px 0;
 }
 .sets span, .games span, .score span{
   font-size:22px;
-}
-.server{
-  font-size:16px;
-  margin-bottom:10px;
 }
 button{
   width:95%;
@@ -58,10 +54,6 @@ PUNTOS<br>
 <span id="pointsA">0</span> - <span id="pointsB">0</span>
 </div>
 
-<div class="server">
-Saca: <span id="server">A</span>
-</div>
-
 <button id="a" onclick="point('A')">EQUIPO A</button>
 <button id="b" onclick="point('B')">EQUIPO B</button>
 
@@ -69,26 +61,22 @@ Saca: <span id="server">A</span>
 <button class="small" onclick="reset()">🔄 Nuevo partido</button>
 
 <script>
-let pA=0,pB=0;
-let gA=0,gB=0;
-let sA=0,sB=0;
-let server="A";
+let pA=0,pB=0,gA=0,gB=0,sA=0,sB=0;
 let history=[];
 
 const names=["0","15","30","40"];
 
-function save(){ history.push([pA,pB,gA,gB,sA,sB,server]); }
+function save(){ history.push([pA,pB,gA,gB,sA,sB]); }
 
 function undo(){
   let h=history.pop();
   if(!h) return;
-  [pA,pB,gA,gB,sA,sB,server]=h;
+  [pA,pB,gA,gB,sA,sB]=h;
   update();
 }
 
 function reset(){
   pA=pB=gA=gB=sA=sB=0;
-  server="A";
   history=[];
   update();
 }
@@ -100,17 +88,11 @@ function update(){
   document.getElementById("gamesB").innerHTML=gB;
   document.getElementById("setsA").innerHTML=sA;
   document.getElementById("setsB").innerHTML=sB;
-  document.getElementById("server").innerHTML=server;
-}
-
-function switchServer(){
-  server = (server=="A")?"B":"A";
 }
 
 function winGame(team){
   if(team=="A") gA++; else gB++;
   pA=0; pB=0;
-  switchServer();
   if((gA>=6||gB>=6)&&Math.abs(gA-gB)>=2){ winSet(team); }
   if(gA==7||gB==7){ winSet(team); }
   update();
